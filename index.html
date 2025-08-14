@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Kelime Analizi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #25D366;
+            --secondary-color: #128C7E;
+            --light-color: #f5f5f5;
+            --dark-color: #333;
+            --gray-color: #e0e0e0;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Giriş Sayfası */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Arka plan sloganları */
+        .background-quotes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .quote {
+            position: absolute;
+            font-size: 18px;
+            font-weight: 300;
+            color: rgba(128, 128, 128, 0.15);
+            white-space: nowrap;
+            animation: float 20s infinite linear;
+        }
+
+        .quote:nth-child(1) { top: 10%; left: -50%; animation-delay: 0s; }
+        .quote:nth-child(2) { top: 25%; right: -50%; animation-delay: 4s; }
+        .quote:nth-child(3) { top: 40%; left: -50%; animation-delay: 8s; }
+        .quote:nth-child(4) { top: 55%; right: -50%; animation-delay: 12s; }
+        .quote:nth-child(5) { top: 70%; left: -50%; animation-delay: 16s; }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .company-info {
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .company-info .company-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .company-info .developer-info {
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        /* Ana Sayfa */
+        .main-page {
+            min-height: 100vh;
+            background: #f9f9f9;
+        }
+
+        .header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .brand i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            padding: 8px 15px;
+            border-radius: 25px;
+        }
+
+        .user-info i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .logo {
+            font-size: 50px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .hidden { 
+            display: none; 
+        }
+
+        .form-group { 
+            margin: 20px 0; 
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-control { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid var(--gray-color); 
+            border-radius: var(--radius); 
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px dashed var(--gray-color);
+        }
+
+        .file-label:hover {
+            background-color: var(--gray-color);
+            border-color: var(--primary-color);
+        }
+
+        .file-label i {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        #fileName {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .btn { 
+            width: 100%;
+            padding: 15px 20px; 
+            background: var(--primary-color); 
+            color: white; 
+            border: none; 
+            border-radius: var(--radius); 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            transform: none;
+        }
+
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .results-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn i {
+            margin-right: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .word-section {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+        }
+
+        .word-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .word-section h3 i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .word-cloud { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            margin: 20px 0; 
+        }
+
+        .word { 
+            padding: 8px 15px; 
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); 
+            border-radius: 20px; 
+            font-size: 14px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .word:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .word-1 { font-size: 12px; opacity: 0.7; }
+        .word-2 { font-size: 14px; opacity: 0.8; }
+        .word-3 { font-size: 16px; opacity: 0.9; }
+        .word-4 { font-size: 18px; font-weight: 500; background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%); }
+        .word-5 { font-size: 20px; font-weight: 600; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; }
+
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            font-size: 20px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .help-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        .modal h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .modal p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .modal ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal li {
+            margin-bottom: 8px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        .modal h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .modal p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .modal ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal li {
+            margin-bottom: 8px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 10px;
+            }
+            
+            .login-box {
+                padding: 25px 15px;
+                margin: 10px;
+                max-width: 95vw;
+            }
+            
+            .quote {
+                font-size: 14px;
+            }
+            
+            .help-btn {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 18px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+=======
+    </style>
+</head>
+<body>
+    <!-- Giriş Sayfası -->
+    <div id="loginPage" class="login-container">
+        <!-- Arka plan sloganları -->
+        <div class="background-quotes">
+            <div class="quote">Sevgilinle neler konuştun, kelimeler anlatsın!</div>
+            <div class="quote">Sohbetinizin en çok hangi kelimelerden oluştuğunu keşfet!</div>
+            <div class="quote">Aşk dolu kelimelerinizin sırrını çözün!</div>
+            <div class="quote">Sevgilinle mesajlaşmalarınıza yeni bir gözle bakın!</div>
+            <div class="quote">İlişkinizin kelime haritasını çıkarın!</div>
+        </div>
+
+        <div class="login-box">
+            <div class="company-info">
+                <div class="company-name">CodeBug</div>
+                <div class="developer-info">Hakan Aytaş 2025 Diyarbakır</div>
+            </div>
+            
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h1>WhatsApp Kelime Analizi</h1>
+            
+            <div class="form-group">
+                <label for="fileInput">WhatsApp Sohbet Dosyası (TXT)</label>
+                <input type="file" id="fileInput" class="file-input" accept=".txt">
+                <label for="fileInput" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Dosya Yükle
+                </label>
+                <div id="fileName">Dosya seçilmedi</div>
+            </div>
+
+            <div id="userSelection" class="hidden">
+                <div class="form-group">
+                    <label for="yourName">Sizin Adınız</label>
+                    <select id="yourName" class="form-control">
+                        <option value="">Seçin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="partnerName">Partnerinizin Adı</label>
+                    <select id="partnerName" class="form-control">
+                        <option value="">Seçin</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="btn" disabled>
+                <i class="fas fa-chart-line"></i> Analiz Et
+            </button>
+        </div>
+    </div>
+
+    <!-- Ana Sayfa -->
+    <div id="results" class="hidden main-page">
+        <header class="header">
+            <nav class="navbar">
+                <div class="brand">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Kelime Analizi</span>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-user"></i>
+                    <span id="currentUser">Analiz Sonuçları</span>
+                </div>
+            </nav>
+        </header>
+
+        <div class="results-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <button class="logout-btn" onclick="location.reload()">
+                    <i class="fas fa-arrow-left"></i> Yeni Analiz
+                </button>
+            </div>
+            
+            <div class="results-header">
+                <h2><i class="fas fa-chart-bar"></i> Analiz Sonuçları</h2>
+                <p>Sohbetinizdeki en çok kullanılan kelimeler</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="word-section">
+                    <h3><i class="fas fa-user"></i> Sizin En Çok Kullandığınız Kelimeler</h3>
+                    <div id="yourWords" class="word-cloud"></div>
+                </div>
+                
+                <div class="word-section">
+                    <h3><i class="fas fa-user-friends"></i> Partnerinizin En Çok Kullandığı Kelimeler</h3>
+                    <div id="partnerWords" class="word-cloud"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 30px; color: #666; font-size: 14px;">
+            Hakan Aytaş 2025 Diyarbakır hffhakan@gmail.com
+        </footer>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h3><i class="fas fa-info-circle"></i> Nasıl Kullanılır?</h3>
+            <p><strong>1. WhatsApp Sohbet Dışa Aktarma:</strong></p>
+            <p>• WhatsApp'ta sohbeti açın → Sağ üst menü → Daha fazla → Sohbeti dışa aktar → Medya olmadan</p>
+            
+            <p><strong>2. Dosya Yükleme:</strong></p>
+            <p>• İndirilen .txt dosyasını "Dosya Yükle" butonuyla seçin</p>
+            
+            <p><strong>3. Kullanıcı Seçimi:</strong></p>
+            <p>• Açılan listeden kendi adınızı ve partnerinizin adını seçin</p>
+            
+            <p><strong>4. Analiz:</strong></p>
+            <p>• "Analiz Et" butonuna tıklayın ve sonuçları görün</p>
+            
+            <p><strong>Not:</strong> Sistem otomatik olarak aşağıdaki içerikleri filtreler:</p>
+            <ul>
+                <li>Sistem mesajları (arama, sesli mesaj, fotoğraf vb.)</li>
+                <li>Sayılar ve rakamlar</li>
+                <li>Tek karakterli kelimeler</li>
+                <li>Noktalama işaretleri</li>
+            </ul>
+        </div>
+    </div>
+
+    <button class="help-btn" id="helpBtn">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <script>
+        let chatContent = '';
+        let users = [];
+
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const userSelection = document.getElementById('userSelection');
+        const yourName = document.getElementById('yourName');
+        const partnerName = document.getElementById('partnerName');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const results = document.getElementById('results');
+        const helpBtn = document.getElementById('helpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Help modal functionality
+        helpBtn.addEventListener('click', function() {
+            helpModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', function() {
+            helpModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (e.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+
+        fileInput.addEventListener('change', function() {
+            console.log('Dosya seçildi:', this.files[0]?.name);
+            
+            if (this.files[0]) {
+                fileName.textContent = this.files[0].name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    chatContent = e.target.result;
+                    console.log('Dosya içeriği yüklendi, uzunluk:', chatContent.length);
+                    console.log('İlk 500 karakter:', chatContent.substring(0, 500));
+                    
+                    findUsers();
+                };
+                reader.readAsText(this.files[0]);
+            }
+        });
+
+        function findUsers() {
+            console.log('Kullanıcı arama başladı...');
+            users = [];
+            const lines = chatContent.split('\n');
+            
+            // Farklı WhatsApp formatlarını test edelim
+            const patterns = [
+                /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(:\d{2})?)\]\s*([^:]+):\s*(.*)/,  // [22/04/2025, 18:03:04] Name: Message
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(:\d{2})?)\s*-\s*([^:]+):\s*(.*)/,   // 22/04/2025, 18:03:04 - Name: Message
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4})\s*(\d{1,2}:\d{2}(:\d{2})?)\s*([^:]+):\s*(.*)/          // 22/04/2025 18:03:04 Name: Message
+            ];
+
+            lines.forEach((line, index) => {
+                if (index < 10) console.log(`Satır ${index}:`, line); // İlk 10 satırı göster
+                
+                for (let pattern of patterns) {
+                    const match = line.match(pattern);
+                    if (match) {
+                        const userName = match[4] ? match[4].trim() : match[3].trim();
+                        if (userName && !users.includes(userName)) {
+                            users.push(userName);
+                            console.log('Kullanıcı bulundu:', userName);
+                        }
+                        break;
+                    }
+                }
+            });
+
+            console.log('Bulunan tüm kullanıcılar:', users);
+            
+            if (users.length > 0) {
+                populateUsers();
+            } else {
+                alert('Hiç kullanıcı bulunamadı. Dosya formatını kontrol edin.');
+            }
+        }
+
+        function populateUsers() {
+            yourName.innerHTML = '<option value="">Seçin</option>';
+            partnerName.innerHTML = '<option value="">Seçin</option>';
+            
+            users.forEach(user => {
+                yourName.innerHTML += `<option value="${user}">${user}</option>`;
+                partnerName.innerHTML += `<option value="${user}">${user}</option>`;
+            });
+            
+            userSelection.classList.remove('hidden');
+        }
+
+        yourName.addEventListener('change', checkSelection);
+        partnerName.addEventListener('change', checkSelection);
+
+        function checkSelection() {
+            if (yourName.value && partnerName.value && yourName.value !== partnerName.value) {
+                analyzeBtn.disabled = false;
+            } else {
+                analyzeBtn.disabled = true;
+            }
+        }
+
+        analyzeBtn.addEventListener('click', function() {
+            console.log('Analiz başlıyor...');
+            console.log('Seçilen kullanıcılar:', yourName.value, 'vs', partnerName.value);
+            
+            const yourMessages = [];
+            const partnerMessages = [];
+            const lines = chatContent.split('\n');
+            
+            const patterns = [
+                /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(:\d{2})?)\]\s*([^:]+):\s*(.*)/,
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s*(\d{1,2}:\d{2}(:\d{2})?)\s*-\s*([^:]+):\s*(.*)/,
+                /^(\d{1,2}\/\d{1,2}\/\d{2,4})\s*(\d{1,2}:\d{2}(:\d{2})?)\s*([^:]+):\s*(.*)/
+            ];
+
+            lines.forEach(line => {
+                for (let pattern of patterns) {
+                    const match = line.match(pattern);
+                    if (match) {
+                        const userName = match[4] ? match[4].trim() : match[3].trim();
+                        const message = match[5] ? match[5].trim() : match[4].trim();
+                        
+                        if (userName === yourName.value) {
+                            yourMessages.push(message);
+                        } else if (userName === partnerName.value) {
+                            partnerMessages.push(message);
+                        }
+                        break;
+                    }
+                }
+            });
+
+            console.log('Sizin mesajlarınız:', yourMessages.length);
+            console.log('Partner mesajları:', partnerMessages.length);
+            
+            if (yourMessages.length === 0 && partnerMessages.length === 0) {
+                alert('Hiç mesaj bulunamadı!');
+                return;
+            }
+
+            showResults(yourMessages, partnerMessages);
+        });
+
+        function showResults(yourMessages, partnerMessages) {
+            const yourWords = getWords(yourMessages);
+            const partnerWords = getWords(partnerMessages);
+            
+            displayWords(yourWords, 'yourWords');
+            displayWords(partnerWords, 'partnerWords');
+            
+            // Giriş sayfasını gizle ve ana sayfayı göster
+            document.getElementById('loginPage').classList.add('hidden');
+            results.classList.remove('hidden');
+            
+            // Kullanıcı adını üst menüde göster
+            document.getElementById('currentUser').textContent = yourName.value;
+        }
+
+        function getWords(messages) {
+            const words = [];
+            const systemWords = ['arama', 'sesli', 'video', 'fotoğraf', 'konum', 'belge', 'çıkartma', 'gif', 'medya', 'silindi', 'dahil', 'edilmedi', 'mesaj', 'beklen', 'çağrı'];
+            
+            messages.forEach(msg => {
+                // Sistem mesajlarını filtrele
+                const msgLower = msg.toLowerCase();
+                const isSystemMessage = systemWords.some(sysWord => 
+                    msgLower.includes(sysWord + ' dahil edilmedi') ||
+                    msgLower.includes(sysWord) && (msgLower.includes('dahil edilmedi') || msgLower.includes('çağrı') || msgLower.includes('arama'))
+                );
+                
+                if (isSystemMessage) {
+                    return; // Bu mesajı atla
+                }
+                
+                const msgWords = msg.toLowerCase()
+                    .replace(/[^\wğüşıöç\s]/g, ' ')
+                    .split(/\s+/)
+                    .filter(word => word.length > 2 && !systemWords.includes(word));
+                words.push(...msgWords);
+            });
+            return words;
+        }
+
+        function displayWords(words, elementId) {
+            const freq = {};
+            words.forEach(word => {
+                freq[word] = (freq[word] || 0) + 1;
+            });
+            
+            const sorted = Object.entries(freq)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 30);
+            
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            if (sorted.length === 0) {
+                element.innerHTML = '<div class="no-data">Analiz edilecek kelime bulunamadı</div>';
+                return;
+            }
+            
+            sorted.forEach(([word, count], index) => {
+                const span = document.createElement('span');
+                
+                // Kelime boyutunu frekansa göre dinamik olarak belirle
+                let sizeClass;
+                if (index < 3) sizeClass = 'word-5';
+                else if (index < 8) sizeClass = 'word-4';
+                else if (index < 15) sizeClass = 'word-3';
+                else if (index < 25) sizeClass = 'word-2';
+                else sizeClass = 'word-1';
+                
+                span.className = `word ${sizeClass}`;
+                span.textContent = `${word} (${count})`;
+                element.appendChild(span);
+            });
+        }
+    </script>
+</body>
+</html>
